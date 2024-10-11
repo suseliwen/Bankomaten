@@ -53,7 +53,7 @@ class Program
                 }
                 case 2:
                 {
-                    System.Console.WriteLine("Visa saldo");
+                    bank.ShowBalance();
                     break;
                 }
                 case 3:
@@ -78,10 +78,8 @@ class Program
                     break;
 
                 }
-
             }
         }
-
     }
 }
 
@@ -98,9 +96,7 @@ public class Bankkonto //En klass som innehåller all information som behövs f�
         this.Balance = balance;
         this.AccountNr = accountNr;
     }   
-
 }
-
 
 public class Bank //En klass som innehåller en lista för bankkonton samt metoder för skapa konto/insättning/uttag 
 {
@@ -109,10 +105,8 @@ public class Bank //En klass som innehåller en lista för bankkonton samt metod
     private Bankkonto konto;
     private Bankkonto myAccount;
 
-
-    public void CreateAccount()
-    {
-       
+    public void CreateAccount() //Metod för att skapa ett nytt konto
+    {      
         
         System.Console.Write("Skriv in ditt namn (för- och efternamn): ");
         string name = Console.ReadLine();
@@ -124,8 +118,8 @@ public class Bank //En klass som innehåller en lista för bankkonton samt metod
             return;
         }
 
-        Random rnd = new Random();
-        int accountNr = rnd.Next(10000, 99999);
+        Random rnd = new Random(); 
+        int accountNr = rnd.Next(10000, 99999); //slumpar fram ett femsiffrigt kontonummer
 
         Bankkonto newAccount = new Bankkonto(name, deposit, accountNr);
 
@@ -142,8 +136,12 @@ public class Bank //En klass som innehåller en lista för bankkonton samt metod
         if(!int.TryParse(input, out int myAccount))
         {
             System.Console.WriteLine("Felaktig inmatning. Du kan endast ange kontonummer. ");
+            konto = null;
+            return;
         }
-        Bankkonto konto = bankkonton.FirstOrDefault(b => b.AccountNr == myAccount);
+        
+        konto = bankkonton.FirstOrDefault(b => b.AccountNr == myAccount);
+        
 
         if (konto == null)
         {
@@ -165,7 +163,9 @@ public class Bank //En klass som innehåller en lista för bankkonton samt metod
         }
 
         konto.Balance += depositAmount;
+        System.Console.WriteLine("----------------------------------------------------------------------------------------------");
         System.Console.WriteLine($"Du har satt in {depositAmount} kronor på konto {myAccount}. Ditt nya saldo är {konto.Balance}");
+        System.Console.WriteLine("----------------------------------------------------------------------------------------------");        
     }
 
     public void WithDrawMoney()
@@ -186,6 +186,19 @@ public class Bank //En klass som innehåller en lista för bankkonton samt metod
         System.Console.WriteLine($"Du har tagit ut {withDrawAmount} kronor från konto {myAccount}. Det nya saldot är {konto.Balance} ");
          System.Console.WriteLine("---------------------------------------------------------------------------------------------------");
 
+    }
+
+    public void ShowBalance()
+    {
+        EnterAccountNumber();
+
+        if (konto == null)
+        {
+            System.Console.WriteLine("Du måste först ange ett kontonummer");
+            return;
+        }
+
+        System.Console.WriteLine($"Ditt saldo för konto {konto.AccountNr} är {konto.Balance}");
     }
 
     

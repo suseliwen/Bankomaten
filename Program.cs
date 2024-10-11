@@ -19,6 +19,7 @@ class Program
        
        while(isRunning)
        {
+            System.Console.WriteLine("---------------------------");
             System.Console.WriteLine("Gör ett av följande val:");
             System.Console.WriteLine("1. Skapa nytt konto ");
             System.Console.WriteLine("2. Visa saldo ");
@@ -26,6 +27,7 @@ class Program
             System.Console.WriteLine("4. Ta ut pengar ");
             System.Console.WriteLine("5. Avsluta konto ");
             System.Console.WriteLine("6. Stäng programmet");
+            System.Console.WriteLine("---------------------------");
             
             string input = Console.ReadLine();
 
@@ -56,13 +58,12 @@ class Program
                 }
                 case 3:
                 {
-                    System.Console.WriteLine("Sätt in pengar");
-                    bank.depositMoney();
+                    bank.DepositMoney();
                     break;
                 }
                 case 4:
                 {
-                    System.Console.WriteLine("Ta ut pengar");
+                    bank.WithDrawMoney();
                     break;
                 }
                 case 5:
@@ -101,10 +102,12 @@ public class Bankkonto //En klass som innehåller all information som behövs f�
 }
 
 
-public class Bank //En klass som innehåller en lista för bankkonton. 
+public class Bank //En klass som innehåller en lista för bankkonton samt metoder för skapa konto/insättning/uttag 
 {
 
     List<Bankkonto> bankkonton = new List<Bankkonto>();
+    private Bankkonto konto;
+    private Bankkonto myAccount;
 
 
     public void CreateAccount()
@@ -128,28 +131,31 @@ public class Bank //En klass som innehåller en lista för bankkonton.
 
         bankkonton.Add(newAccount);
 
-        System.Console.WriteLine($"Ditt nya bankkonto har skapats med kontonr: {accountNr}. Ditt saldo är: {deposit}");       
-    
+        System.Console.WriteLine($"Ditt nya bankkonto har skapats med kontonr: {accountNr}. Ditt saldo är: {deposit}");    
 
     }
 
-    public void depositMoney()
-    {       
-        System.Console.Write("Ange kontonummer: ");
+    public void EnterAccountNumber()
+    {
+        System.Console.Write("Ange ditt kontonummer: ");
         string input = Console.ReadLine();
         if(!int.TryParse(input, out int myAccount))
         {
-            System.Console.WriteLine("Felaktig inmatning. Du kan endast ange ett kontonummer. ");
+            System.Console.WriteLine("Felaktig inmatning. Du kan endast ange kontonummer. ");
         }
-
         Bankkonto konto = bankkonton.FirstOrDefault(b => b.AccountNr == myAccount);
 
         if (konto == null)
         {
-            System.Console.WriteLine("Konto med angivet kontonummer saknas. ");
+            System.Console.WriteLine("Inget konto med angivet nummer hittat. ");
             return;
         }
+    }
 
+    public void DepositMoney()
+    {   
+        EnterAccountNumber();    
+        
         System.Console.Write("Ange summa som du vill sätta in på kontot: ");
         string depositInput = Console.ReadLine();
         if(!int.TryParse(depositInput, out int depositAmount) || depositAmount <= 0)
@@ -162,10 +168,29 @@ public class Bank //En klass som innehåller en lista för bankkonton.
         System.Console.WriteLine($"Du har satt in {depositAmount} kronor på konto {myAccount}. Ditt nya saldo är {konto.Balance}");
     }
 
-    public void AllAccounts()
+    public void WithDrawMoney()
     {
-        
+        EnterAccountNumber();     
+
+        System.Console.Write("Ange summan som du vill ta ut: ");
+        string withDrawInput = Console.ReadLine();
+        if(!int.TryParse(withDrawInput, out int withDrawAmount) || withDrawAmount <= 0)
+        {
+            System.Console.WriteLine("Felaktig inmatning. Ange ett giltigt belopp.");
+            System.Console.WriteLine();
+            return;            
+        }
+
+        konto.Balance -=  withDrawAmount;
+        System.Console.WriteLine("---------------------------------------------------------------------------------------------------");
+        System.Console.WriteLine($"Du har tagit ut {withDrawAmount} kronor från konto {myAccount}. Det nya saldot är {konto.Balance} ");
+         System.Console.WriteLine("---------------------------------------------------------------------------------------------------");
+
     }
-   
+
+    
+
+        
+    
 }
 
